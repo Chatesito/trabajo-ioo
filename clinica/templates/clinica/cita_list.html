@@ -1,0 +1,38 @@
+{% extends "clinica/base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Citas</h1>
+    <a class="btn btn-primary" href="{% url 'cita_create' %}">Nueva Cita</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Paciente</th>
+                <th>Fecha</th>
+                <th>Motivo</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in object_list %}
+            <tr>
+                <td>{{ cita.paciente.nombre }}</td>
+                <td>{{ cita.fecha }}</td>
+                <td>{{ cita.motivo }}</td>
+                <td class="text-center">
+                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'cita_update' cita.pk %}">Editar</a>
+                    <a class="btn btn-sm btn-outline-danger" href="{% url 'cita_delete' cita.pk %}">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center text-muted">No hay citas registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

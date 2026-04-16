@@ -1,0 +1,14 @@
+{% extends "clinica/base.html" %}
+
+{% block content %}
+<h1 class="h3 mb-3">Eliminar Cita</h1>
+<p>¿Seguro que querés eliminar la cita de <strong>{{ object.paciente.nombre }}</strong>?</p>
+
+<form method="post" class="card card-body">
+    {% csrf_token %}
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+        <a href="{% url 'cita_list' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}
