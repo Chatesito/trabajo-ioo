@@ -13,7 +13,7 @@
 \usepackage{titlesec}
 \usepackage{xcolor}
 \usepackage{tikz}
-\usetikzlibrary{shapes.geometric, positioning, arrows.meta}
+\usetikzlibrary{shapes.geometric, positioning, arrows.meta, fit, backgrounds}
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{tabularx}
@@ -264,17 +264,38 @@ La solución se compone de \textbf{dos contenedores} orquestados por \texttt{pod
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[node distance=1.5cm, every node/.style={font=\small}]
-    \node[draw, rounded corners, fill=primaryblue!10, minimum width=4cm, minimum height=1cm] (host) {Host (navegador) :8000};
-    \node[draw, rounded corners, fill=secondaryblue!20, below of=host, minimum width=4cm, minimum height=1cm] (web) {Contenedor web (Django + gunicorn)};
-    \node[draw, rounded corners, fill=secondaryblue!20, below of=web, minimum width=4cm, minimum height=1cm] (db) {Contenedor db (PostgreSQL 16)};
-    \node[draw, cylinder, shape border rotate=90, fill=primaryblue!10, below of=db, aspect=0.3, minimum height=1.2cm, minimum width=3cm] (vol) {Volumen pgdata};
+\begin{tikzpicture}[
+    font=\small,
+    container/.style={draw, rounded corners=2pt, fill=white, minimum width=3.8cm, minimum height=1.5cm, align=center, thick},
+    browser/.style={draw, rounded corners=2pt, fill=primaryblue!20, minimum width=3.4cm, minimum height=0.9cm, align=center, thick},
+    vol/.style={draw, cylinder, shape border rotate=90, fill=primaryblue!10, minimum height=1.3cm, minimum width=2.4cm, aspect=0.3, thick},
+    flow/.style={-{Latex[length=2.5mm]}, thick},
+    port/.style={font=\footnotesize\ttfamily},
+    lbl/.style={font=\footnotesize},
+    ]
 
-    \draw[->, thick] (host) -- node[right] {HTTP} (web);
-    \draw[->, thick] (web) -- node[right] {psycopg2 / red clinica\_net} (db);
-    \draw[->, thick] (db) -- node[right] {/var/lib/postgresql/data} (vol);
+    \node[browser] (browser) {Navegador\\ (usuario)};
+
+    \node[container, below=1.8cm of browser, xshift=-2.6cm] (web) {\textbf{clinica\_web}\\ Django + gunicorn\\ \texttt{:8000}};
+    \node[container, right=1.4cm of web] (db) {\textbf{clinica\_db}\\ PostgreSQL 16\\ \texttt{:5432}};
+    \node[vol, below=1.4cm of db] (volume) {pgdata};
+
+    \draw[flow] (browser) -- node[lbl, right, pos=0.45] {HTTP \texttt{8000:8000}} (web);
+    \draw[flow] (web) -- node[lbl, above] {TCP \texttt{5432}} node[lbl, below] {DNS: \texttt{db}} (db);
+    \draw[flow] (db) -- node[lbl, right] {\texttt{/var/lib/postgresql/data}} (volume);
+
+    \begin{pgfonlayer}{background}
+        \node[draw, dashed, rounded corners, fill=secondaryblue!8, inner sep=0.45cm, fit=(web)(db)] (net) {};
+        \node[above right=-0.05cm and 0cm of net.north west, font=\footnotesize\bfseries\color{secondaryblue}] {Red privada: clinica\_net};
+
+        \node[draw, rounded corners, fill=primaryblue!5, inner sep=0.6cm, fit=(net)(volume)] (podman) {};
+        \node[above right=-0.05cm and 0cm of podman.north west, font=\footnotesize\bfseries\color{primaryblue}] {Podman runtime (rootless)};
+
+        \node[draw, thick, rounded corners, fill=gray!8, inner sep=0.55cm, fit=(browser)(podman)] (host) {};
+        \node[above right=-0.05cm and 0cm of host.north west, font=\footnotesize\bfseries] {Host (Linux --- tu PC)};
+    \end{pgfonlayer}
 \end{tikzpicture}
-\caption{Arquitectura de contenedores del sistema}
+\caption{Arquitectura de contenedores del sistema. El navegador del usuario accede al puerto 8000 del host, que está mapeado al contenedor \texttt{clinica\_web}. Éste se comunica con \texttt{clinica\_db} a través de la red privada \texttt{clinica\_net} usando el nombre DNS \texttt{db}. La base de datos persiste sus archivos en el volumen nombrado \texttt{pgdata}. El puerto 5432 de Postgres NO está expuesto al host.}
 \end{figure}
 
 \subsection{Servicio web}
