@@ -15,3 +15,15 @@ AGENTS.md
 proyecto_pacientes_citas.md
 Docs/
 .atl/
+
+# Artefactos de compilación LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Archivos estáticos colectados por Django
+staticfiles/

@@ -4,7 +4,7 @@
 % PAQUETES
 % ============================================================================
 \usepackage[utf8]{inputenc}
-\usepackage[spanish]{babel}
+\usepackage[spanish,es-noshorthands]{babel}
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{float}
@@ -13,6 +13,7 @@
 \usepackage{titlesec}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usetikzlibrary{shapes.geometric, positioning, arrows.meta}
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{tabularx}
@@ -34,7 +35,8 @@
 \definecolor{codekeyword}{RGB}{204, 120, 50}
 \definecolor{codestring}{RGB}{106, 135, 89}
 
-\hypersetup{colorlinks=true, linkcolor=primaryblue, urlcolor=secondaryblue}
+\hypersetup{colorlinks=true, linkcolor=primaryblue, urlcolor=secondaryblue, pdfborder={0 0 0}}
+\emergencystretch=3em
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -387,7 +389,7 @@ Finalmente ejecuta el \texttt{CMD} del Dockerfile (gunicorn) con \texttt{exec "\
 \begin{table}[H]
 \centering
 \renewcommand{\arraystretch}{1.3}
-\begin{tabularx}{\textwidth}{|>{\ttfamily}p{4.2cm}|X|}
+\begin{tabularx}{\textwidth}{|>{\ttfamily\small}p{5.3cm}|X|}
 \hline
 \rowcolor[RGB]{25,55,109}
 \textcolor{white}{\textbf{Variable}} & \textcolor{white}{\textbf{Descripción}} \\
@@ -511,7 +513,7 @@ podman push docker.io/donleonz/clinica-ioo:latest
 podman push docker.io/donleonz/clinica-ioo:v1.0
 \end{lstlisting}
 
-La imagen queda disponible en \texttt{https://hub.docker.com/r/donleonz/clinica-ioo} y cualquier persona puede descargarla y ejecutarla con:
+La imagen queda disponible en \url{https://hub.docker.com/r/donleonz/clinica-ioo} y cualquier persona puede descargarla y ejecutarla con:
 
 \begin{lstlisting}[language=bash]
 podman pull docker.io/donleonz/clinica-ioo:latest
