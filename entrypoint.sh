@@ -23,5 +23,25 @@ python manage.py migrate --noinput
 echo ">> Colectando archivos estáticos"
 python manage.py collectstatic --noinput
 
+if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
+    echo ">> Asegurando superusuario $DJANGO_SUPERUSER_USERNAME"
+    python <<PY
+import os, django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
+django.setup()
+from django.contrib.auth import get_user_model
+U = get_user_model()
+u, created = U.objects.get_or_create(
+    username=os.environ["DJANGO_SUPERUSER_USERNAME"],
+    defaults={"email": os.environ.get("DJANGO_SUPERUSER_EMAIL", "")},
+)
+u.is_staff = True
+u.is_superuser = True
+u.set_password(os.environ["DJANGO_SUPERUSER_PASSWORD"])
+u.save()
+print(f"   {'creado' if created else 'actualizado'}: {u.username}")
+PY
+fi
+
 echo ">> Iniciando: $@"
 exec "$@"
