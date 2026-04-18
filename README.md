@@ -246,22 +246,22 @@ Solo `podman-compose down -v` borra el volumen (y por lo tanto los datos).
 
 ```bash
 podman login docker.io
-# Username: TU_USUARIO
+# Username: donleonz
 # Password: ****
 ```
 
 ### 9.3. Etiquetar la imagen
 
 ```bash
-podman tag clinica-ioo:latest docker.io/TU_USUARIO/clinica-ioo:latest
-podman tag clinica-ioo:latest docker.io/TU_USUARIO/clinica-ioo:v1.0
+podman tag localhost/clinica-ioo:latest docker.io/donleonz/clinica-ioo:latest
+podman tag localhost/clinica-ioo:latest docker.io/donleonz/clinica-ioo:v1.0
 ```
 
 ### 9.4. Subir a Docker Hub
 
 ```bash
-podman push docker.io/TU_USUARIO/clinica-ioo:latest
-podman push docker.io/TU_USUARIO/clinica-ioo:v1.0
+podman push docker.io/donleonz/clinica-ioo:latest
+podman push docker.io/donleonz/clinica-ioo:v1.0
 ```
 
 ### 9.5. Verificar
@@ -269,13 +269,13 @@ podman push docker.io/TU_USUARIO/clinica-ioo:v1.0
 La imagen queda disponible en:
 
 ```
-https://hub.docker.com/r/TU_USUARIO/clinica-ioo
+https://hub.docker.com/r/donleonz/clinica-ioo
 ```
 
 Cualquier persona puede ahora correrla:
 
 ```bash
-podman pull docker.io/TU_USUARIO/clinica-ioo:latest
+podman pull docker.io/donleonz/clinica-ioo:latest
 ```
 
 ---

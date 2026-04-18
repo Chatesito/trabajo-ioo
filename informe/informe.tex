@@ -500,21 +500,21 @@ podman login docker.io
 \subsection{Etiquetado}
 
 \begin{lstlisting}[language=bash]
-podman tag clinica-ioo:latest docker.io/USUARIO/clinica-ioo:latest
-podman tag clinica-ioo:latest docker.io/USUARIO/clinica-ioo:v1.0
+podman tag clinica-ioo:latest docker.io/donleonz/clinica-ioo:latest
+podman tag clinica-ioo:latest docker.io/donleonz/clinica-ioo:v1.0
 \end{lstlisting}
 
 \subsection{Publicación}
 
 \begin{lstlisting}[language=bash]
-podman push docker.io/USUARIO/clinica-ioo:latest
-podman push docker.io/USUARIO/clinica-ioo:v1.0
+podman push docker.io/donleonz/clinica-ioo:latest
+podman push docker.io/donleonz/clinica-ioo:v1.0
 \end{lstlisting}
 
-La imagen queda disponible en \texttt{https://hub.docker.com/r/USUARIO/clinica-ioo} y cualquier persona puede descargarla y ejecutarla con:
+La imagen queda disponible en \texttt{https://hub.docker.com/r/donleonz/clinica-ioo} y cualquier persona puede descargarla y ejecutarla con:
 
 \begin{lstlisting}[language=bash]
-podman pull docker.io/USUARIO/clinica-ioo:latest
+podman pull docker.io/donleonz/clinica-ioo:latest
 \end{lstlisting}
 
 % ============================================================================
