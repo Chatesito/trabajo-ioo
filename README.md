@@ -15,7 +15,7 @@ Este repositorio contiene una pequeña aplicación web de gestión de **paciente
 | Lenguaje | Python 3.12 |
 | Framework | Django 6.0.4 |
 | Servidor de aplicación | Gunicorn |
-| Servido de estáticos | WhiteNoise |
+| Servidor de estáticos | WhiteNoise |
 | Base de datos | PostgreSQL 16 (alpine) |
 | Contenedores | Podman + podman-compose |
 | Registro de imágenes | Docker Hub |
