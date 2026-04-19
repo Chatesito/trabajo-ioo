@@ -1,0 +1,569 @@
+\documentclass[12pt,a4paper]{article}
+
+% ============================================================================
+% PAQUETES
+% ============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, positioning, arrows.meta, fit, backgrounds}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{enumitem}
+
+% ============================================================================
+% CONFIGURACIÓN DE PÁGINA
+% ============================================================================
+\geometry{left=3cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+\setlength{\headheight}{15pt}
+
+\definecolor{primaryblue}{RGB}{25, 55, 109}
+\definecolor{secondaryblue}{RGB}{41, 74, 139}
+\definecolor{darkgray}{RGB}{50, 50, 50}
+\definecolor{codebg}{RGB}{245, 247, 250}
+\definecolor{codecomment}{RGB}{106, 135, 89}
+\definecolor{codekeyword}{RGB}{204, 120, 50}
+\definecolor{codestring}{RGB}{106, 135, 89}
+
+\hypersetup{colorlinks=true, linkcolor=primaryblue, urlcolor=secondaryblue, pdfborder={0 0 0}}
+\emergencystretch=3em
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Taller Docker --- OO}
+\lhead{Ingeniería Orientada a Objetos}
+\rfoot{\thepage}
+
+\titleformat{\section}{\normalfont\Large\bfseries\color{primaryblue}}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\color{secondaryblue}}{\thesubsection}{1em}{}
+
+% ============================================================================
+% CONFIGURACIÓN DE CÓDIGO
+% ============================================================================
+\lstdefinestyle{codestyle}{
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{codecomment},
+    keywordstyle=\color{codekeyword}\bfseries,
+    stringstyle=\color{codestring},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    frame=single,
+    rulecolor=\color{darkgray}
+}
+\lstset{style=codestyle}
+
+% ============================================================================
+% INICIO DEL DOCUMENTO
+% ============================================================================
+\begin{document}
+
+% ============================================================================
+% PORTADA
+% ============================================================================
+\begin{titlepage}
+
+    \begin{tikzpicture}[remember picture, overlay]
+        \fill[primaryblue] (current page.north west) rectangle ([xshift=1.5cm]current page.south west);
+    \end{tikzpicture}
+    \begin{tikzpicture}[remember picture, overlay]
+        \fill[secondaryblue] ([xshift=1.5cm]current page.north west) rectangle ([xshift=1.7cm]current page.south west);
+    \end{tikzpicture}
+
+    \hspace{2.5cm}
+    \begin{minipage}[t]{0.8\textwidth}
+
+        \vspace{2cm}
+
+        {\Large\textcolor{primaryblue}{\textbf{ACTIVIDAD IX}}}
+
+        \vspace{0.2cm}
+        {\large\textcolor{darkgray}{Ingeniería Orientada a Objetos}}
+
+        \vspace{2.5cm}
+
+        {\Huge\textcolor{primaryblue}{\textbf{Taller Docker --- OO}}}\\[0.3cm]
+        {\Huge\textcolor{primaryblue}{\textbf{Clínica Web en Contenedor}}}
+
+        \vspace{0.8cm}
+        {\LARGE\textcolor{darkgray}{CRUD de Pacientes y Citas con Django, PostgreSQL y Podman}}
+
+        \vspace{0.5cm}
+        {\large\textcolor{darkgray}{\textit{Universidad Surcolombiana --- Ingeniería de Software}}}
+
+        \vspace{3cm}
+
+        {\large\textcolor{primaryblue}{\textbf{ESTUDIANTES}}}\\[0.5cm]
+        \begin{tabular}{@{}l@{\hspace{0.5cm}}l@{}}
+            \textbf{Jorge León Chavarro Alarcón} & Código: 20231211354 \\[0.2cm]
+            \textbf{Juan David Rivera Chaté}     & Código: 20231213382 \\
+        \end{tabular}
+
+        \vspace{1.5cm}
+
+        {\large\textcolor{primaryblue}{\textbf{DOCENTE}}}\\[0.5cm]
+        \textbf{Eduardo Martínez Vidal}
+
+        \vfill
+        \textcolor{primaryblue}{\rule{0.8\linewidth}{1pt}}
+        \vspace{0.3cm}
+        {\large\textcolor{darkgray}{\today}}
+
+    \end{minipage}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ============================================================================
+% 1. INTRODUCCIÓN
+% ============================================================================
+\section{Introducción}
+
+El presente informe documenta el desarrollo de la \textbf{Actividad IX} de la asignatura Ingeniería de Software Orientada a Objetos, cuyo objetivo es construir una aplicación con paradigma orientado a objetos, conectada a una base de datos relacional, empaquetada en un contenedor con persistencia de datos mediante volúmenes, y finalmente publicada en Docker Hub.
+
+Se optó por desarrollar una aplicación web de gestión de pacientes y citas para una clínica, implementada en Python con el framework Django 6, respaldada por PostgreSQL 16 como motor de base de datos. Todo el entorno se orquesta mediante \textbf{Podman} (alternativa libre y compatible con Docker, autorizada por el docente) en lugar de Docker, aprovechando que el equipo de trabajo cuenta con sistemas operativos basados en Linux sin la necesidad de un demonio privilegiado.
+
+\section{Objetivos}
+
+\subsection{Objetivo general}
+
+Desarrollar una aplicación orientada a objetos, en contenedor, con persistencia de datos mediante volúmenes y publicada en Docker Hub.
+
+\subsection{Objetivos específicos}
+
+\begin{itemize}
+    \item Implementar un CRUD relacional con al menos dos entidades siguiendo el paradigma orientado a objetos.
+    \item Diseñar una arquitectura multi-contenedor con separación de responsabilidades entre aplicación y base de datos.
+    \item Garantizar la persistencia de la información mediante el uso de volúmenes nombrados.
+    \item Automatizar el arranque completo mediante \texttt{podman-compose} y un script \texttt{start.sh}.
+    \item Publicar la imagen resultante en Docker Hub para su distribución.
+\end{itemize}
+
+% ============================================================================
+% 2. DESCRIPCIÓN DE LA APLICACIÓN
+% ============================================================================
+\section{Descripción de la Aplicación}
+
+\subsection{Dominio}
+
+La aplicación modela la gestión básica de una clínica. Permite registrar pacientes con sus datos de contacto y agendar citas asociadas a cada paciente con fecha, hora y motivo. Se implementó un CRUD completo (crear, listar, editar, eliminar) para ambas entidades.
+
+\subsection{Paradigma orientado a objetos}
+
+Django implementa el patrón \textit{Active Record} a través de su ORM: cada tabla de la base de datos se representa como una clase Python que hereda de \texttt{django.db.models.Model} y expone atributos tipados y métodos propios del dominio. A continuación se muestran las dos clases principales.
+
+\begin{lstlisting}[language=Python, caption={clinica/models.py}]
+from django.db import models
+from django.core.validators import RegexValidator
+
+
+class Paciente(models.Model):
+    nombre = models.CharField(max_length=150)
+    cedula = models.CharField(
+        max_length=20,
+        unique=True,
+        validators=[
+            RegexValidator(
+                regex=r"^\d+$",
+                message="La cedula debe contener solo numeros.",
+            )
+        ],
+    )
+    telefono = models.CharField(
+        max_length=20,
+        validators=[
+            RegexValidator(
+                regex=r"^\+?\d+$",
+                message="El telefono debe contener solo numeros.",
+            )
+        ],
+    )
+    email = models.EmailField()
+
+    def __str__(self):
+        return f"{self.nombre} ({self.cedula})"
+
+
+class Cita(models.Model):
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
+    fecha = models.DateTimeField()
+    motivo = models.TextField()
+
+    def __str__(self):
+        return f"{self.paciente.nombre} - {self.fecha:%Y-%m-%d %H:%M}"
+\end{lstlisting}
+
+Puntos clave del diseño OO:
+
+\begin{itemize}
+    \item Cada entidad es una \textbf{clase} con atributos encapsulados y tipados.
+    \item La clase \texttt{Paciente} incorpora \textbf{validadores} reutilizables (\texttt{RegexValidator}) que garantizan la integridad del dato a nivel de clase, no únicamente a nivel de formulario.
+    \item La relación \textbf{1 a N} entre \texttt{Paciente} y \texttt{Cita} se expresa mediante una \texttt{ForeignKey} con política de borrado en cascada.
+    \item El método mágico \texttt{\_\_str\_\_} ofrece una representación en texto útil para depuración, logs y vistas administrativas.
+    \item El CRUD se implementa mediante \textit{Class-Based Views} (\texttt{ListView}, \texttt{CreateView}, \texttt{UpdateView}, \texttt{DeleteView}) que heredan de clases base de Django, reutilizando lógica y promoviendo el principio de inversión de dependencias.
+\end{itemize}
+
+\subsection{Stack tecnológico}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{|>{\bfseries}p{4cm}|X|}
+\hline
+\rowcolor[RGB]{25,55,109}
+\textcolor{white}{\textbf{Componente}} & \textcolor{white}{\textbf{Tecnología}} \\
+\hline
+Lenguaje & Python 3.12 \\
+\hline
+Framework web & Django 6.0.4 \\
+\hline
+Servidor de aplicación & Gunicorn 23 \\
+\hline
+Servido de estáticos & WhiteNoise 6.9 \\
+\hline
+Base de datos & PostgreSQL 16 (alpine) \\
+\hline
+Driver DB & psycopg2-binary 2.9.11 \\
+\hline
+Gestión de entorno & django-environ 0.13 \\
+\hline
+Contenedores & Podman 5.8 + podman-compose 1.5 \\
+\hline
+Registro de imágenes & Docker Hub \\
+\hline
+\end{tabularx}
+\caption{Stack tecnológico del proyecto}
+\end{table}
+
+% ============================================================================
+% 3. ARQUITECTURA DE CONTENEDORES
+% ============================================================================
+\section{Arquitectura de Contenedores}
+
+La solución se compone de \textbf{dos contenedores} orquestados por \texttt{podman-compose}, un \textbf{volumen nombrado} para la persistencia de la base de datos y una \textbf{red privada} para aislar la comunicación entre servicios.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    container/.style={draw, rounded corners=2pt, fill=white, minimum width=3.8cm, minimum height=1.5cm, align=center, thick},
+    browser/.style={draw, rounded corners=2pt, fill=primaryblue!20, minimum width=3.4cm, minimum height=0.9cm, align=center, thick},
+    vol/.style={draw, cylinder, shape border rotate=90, fill=primaryblue!10, minimum height=1.3cm, minimum width=2.4cm, aspect=0.3, thick},
+    flow/.style={-{Latex[length=2.5mm]}, thick},
+    port/.style={font=\footnotesize\ttfamily},
+    lbl/.style={font=\footnotesize},
+    ]
+
+    \node[browser] (browser) {Navegador\\ (usuario)};
+
+    \node[container, below=1.8cm of browser, xshift=-2.6cm] (web) {\textbf{clinica\_web}\\ Django + gunicorn\\ \texttt{:8000}};
+    \node[container, right=1.4cm of web] (db) {\textbf{clinica\_db}\\ PostgreSQL 16\\ \texttt{:5432}};
+    \node[vol, below=1.4cm of db] (volume) {pgdata};
+
+    \draw[flow] (browser) -- node[lbl, right, pos=0.45] {HTTP \texttt{8000:8000}} (web);
+    \draw[flow] (web) -- node[lbl, above] {TCP \texttt{5432}} node[lbl, below] {DNS: \texttt{db}} (db);
+    \draw[flow] (db) -- node[lbl, right] {\texttt{/var/lib/postgresql/data}} (volume);
+
+    \begin{pgfonlayer}{background}
+        \node[draw, dashed, rounded corners, fill=secondaryblue!8, inner sep=0.45cm, fit=(web)(db)] (net) {};
+        \node[above right=-0.05cm and 0cm of net.north west, font=\footnotesize\bfseries\color{secondaryblue}] {Red privada: clinica\_net};
+
+        \node[draw, rounded corners, fill=primaryblue!5, inner sep=0.6cm, fit=(net)(volume)] (podman) {};
+        \node[above right=-0.05cm and 0cm of podman.north west, font=\footnotesize\bfseries\color{primaryblue}] {Podman runtime (rootless)};
+
+        \node[draw, thick, rounded corners, fill=gray!8, inner sep=0.55cm, fit=(browser)(podman)] (host) {};
+        \node[above right=-0.05cm and 0cm of host.north west, font=\footnotesize\bfseries] {Host (Linux --- tu PC)};
+    \end{pgfonlayer}
+\end{tikzpicture}
+\caption{Arquitectura de contenedores del sistema. El navegador del usuario accede al puerto 8000 del host, que está mapeado al contenedor \texttt{clinica\_web}. Éste se comunica con \texttt{clinica\_db} a través de la red privada \texttt{clinica\_net} usando el nombre DNS \texttt{db}. La base de datos persiste sus archivos en el volumen nombrado \texttt{pgdata}. El puerto 5432 de Postgres NO está expuesto al host.}
+\end{figure}
+
+\subsection{Servicio web}
+
+Construye la imagen \texttt{clinica-ioo:latest} a partir del \texttt{Dockerfile}. Expone el puerto 8000 al host y se conecta a la base de datos a través del nombre de servicio \texttt{db}, resuelto automáticamente por la DNS interna de Podman.
+
+\subsection{Servicio db}
+
+Usa la imagen oficial \texttt{postgres:16-alpine}. \textbf{No} expone su puerto al host por razones de seguridad: únicamente el contenedor \texttt{web} puede comunicarse con la base a través de la red privada \texttt{clinica\_net}. Implementa un \textit{healthcheck} con \texttt{pg\_isready} para que Podman conozca su estado.
+
+\subsection{Persistencia}
+
+El volumen nombrado \texttt{pgdata} se monta en \texttt{/var/lib/postgresql/data}. Esto garantiza que la información persista entre reinicios, reconstrucciones de la imagen del servicio web, y apagados del equipo. El volumen únicamente se elimina con la opción explícita \texttt{podman-compose down -v}.
+
+% ============================================================================
+% 4. ARCHIVOS CLAVE DEL PROYECTO
+% ============================================================================
+\section{Archivos clave del proyecto}
+
+\subsection{Dockerfile}
+
+\begin{lstlisting}[caption={Dockerfile}]
+FROM python:3.12-slim AS runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends curl \
+ && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+RUN chmod +x /app/entrypoint.sh \
+ && mkdir -p /app/staticfiles
+
+EXPOSE 8000
+
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--access-logfile", "-"]
+\end{lstlisting}
+
+Se utiliza la imagen oficial \texttt{python:3.12-slim} como base, por su balance entre tamaño y ergonomía. El \texttt{ENTRYPOINT} se encarga de preparar la base de datos antes de ejecutar el comando principal.
+
+\subsection{compose.yml}
+
+\begin{lstlisting}[caption={compose.yml}]
+services:
+  db:
+    image: docker.io/library/postgres:16-alpine
+    container_name: clinica_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - clinica_net
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: clinica-ioo:latest
+    container_name: clinica_web
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - clinica_net
+
+volumes:
+  pgdata:
+
+networks:
+  clinica_net:
+\end{lstlisting}
+
+\subsection{entrypoint.sh}
+
+El \texttt{entrypoint} se ejecuta cada vez que arranca el contenedor web. Realiza cuatro pasos secuenciales:
+
+\begin{enumerate}
+    \item \textbf{Espera activa a PostgreSQL}: intenta una conexión con \texttt{psycopg2} cada segundo, hasta 60 intentos.
+    \item \textbf{Migraciones}: ejecuta \texttt{python manage.py migrate --noinput} para aplicar el esquema.
+    \item \textbf{Archivos estáticos}: ejecuta \texttt{collectstatic} para que WhiteNoise pueda servirlos.
+    \item \textbf{Superusuario}: si están definidas las variables \texttt{DJANGO\_SUPERUSER\_USERNAME} y \texttt{DJANGO\_SUPERUSER\_PASSWORD}, crea o actualiza el superusuario de administración.
+\end{enumerate}
+
+Finalmente ejecuta el \texttt{CMD} del Dockerfile (gunicorn) con \texttt{exec "\$@"}, reemplazando el proceso del shell.
+
+\subsection{Variables de entorno}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{|>{\ttfamily\small}p{5.3cm}|X|}
+\hline
+\rowcolor[RGB]{25,55,109}
+\textcolor{white}{\textbf{Variable}} & \textcolor{white}{\textbf{Descripción}} \\
+\hline
+SECRET\_KEY & Clave de firma de Django. \\
+\hline
+DEBUG & Modo depuración (True/False). \\
+\hline
+ALLOWED\_HOSTS & Lista separada por comas de hosts permitidos. \\
+\hline
+POSTGRES\_DB & Nombre de la base. \\
+\hline
+POSTGRES\_USER & Usuario de la base. \\
+\hline
+POSTGRES\_PASSWORD & Contraseña de la base. \\
+\hline
+DATABASE\_URL & URL completa leída por \texttt{django-environ}. \\
+\hline
+DJANGO\_SUPERUSER\_USERNAME & Usuario administrador creado automáticamente. \\
+\hline
+DJANGO\_SUPERUSER\_EMAIL & Correo del administrador. \\
+\hline
+DJANGO\_SUPERUSER\_PASSWORD & Contraseña del administrador. \\
+\hline
+\end{tabularx}
+\caption{Variables de entorno del proyecto}
+\end{table}
+
+% ============================================================================
+% 5. PROCESO DE DESPLIEGUE
+% ============================================================================
+\section{Proceso de despliegue}
+
+\subsection{Requisitos previos}
+
+Sobre una distribución Linux (CachyOS / Arch en el caso de este equipo), instalar:
+
+\begin{lstlisting}[language=bash]
+sudo pacman -S podman podman-compose
+\end{lstlisting}
+
+\subsection{Pasos de despliegue}
+
+\begin{enumerate}
+    \item Clonar el repositorio:
+    \begin{lstlisting}[language=bash]
+git clone https://github.com/Chatesito/trabajo-ioo.git
+cd trabajo-ioo
+    \end{lstlisting}
+
+    \item Crear el archivo \texttt{.env} a partir de la plantilla:
+    \begin{lstlisting}[language=bash]
+cp .env.example .env
+    \end{lstlisting}
+
+    \item Levantar los contenedores:
+    \begin{lstlisting}[language=bash]
+podman-compose up --build -d
+    \end{lstlisting}
+
+    \item Verificar:
+    \begin{lstlisting}[language=bash]
+podman ps
+curl http://localhost:8000/pacientes/
+    \end{lstlisting}
+\end{enumerate}
+
+Alternativamente, se incluye el script \texttt{start.sh} que automatiza todo el proceso, abre el navegador y detiene los contenedores al presionar \texttt{ENTER}.
+
+\subsection{Credenciales del administrador}
+
+El sistema crea automáticamente el siguiente superusuario en el admin de Django:
+
+\begin{itemize}
+    \item \textbf{URL:} \url{http://localhost:8000/admin/}
+    \item \textbf{Usuario:} Leon
+    \item \textbf{Contraseña:} Leon123@
+\end{itemize}
+
+% ============================================================================
+% 6. PERSISTENCIA
+% ============================================================================
+\section{Verificación de la persistencia}
+
+Para demostrar que los datos no se pierden entre ejecuciones se siguió este procedimiento:
+
+\begin{enumerate}
+    \item Se levantaron los contenedores con \texttt{podman-compose up -d}.
+    \item Se crearon varios pacientes y citas desde la interfaz web.
+    \item Se detuvieron los contenedores con \texttt{podman-compose down} (sin el flag \texttt{-v}).
+    \item Se volvieron a levantar con \texttt{podman-compose up -d}.
+    \item Se comprobó que todos los pacientes y citas seguían disponibles.
+\end{enumerate}
+
+Esto es posible gracias al volumen nombrado \texttt{pgdata}, que Podman reconoce y reutiliza en todos los arranques posteriores al primero.
+
+% ============================================================================
+% 7. PUBLICACIÓN EN DOCKER HUB
+% ============================================================================
+\section{Publicación en Docker Hub}
+
+\subsection{Autenticación}
+
+Desde Podman:
+
+\begin{lstlisting}[language=bash]
+podman login docker.io
+\end{lstlisting}
+
+\subsection{Etiquetado}
+
+\begin{lstlisting}[language=bash]
+podman tag clinica-ioo:latest docker.io/donleonz/clinica-ioo:latest
+podman tag clinica-ioo:latest docker.io/donleonz/clinica-ioo:v1.0
+\end{lstlisting}
+
+\subsection{Publicación}
+
+\begin{lstlisting}[language=bash]
+podman push docker.io/donleonz/clinica-ioo:latest
+podman push docker.io/donleonz/clinica-ioo:v1.0
+\end{lstlisting}
+
+La imagen queda disponible en \url{https://hub.docker.com/r/donleonz/clinica-ioo} y cualquier persona puede descargarla y ejecutarla con:
+
+\begin{lstlisting}[language=bash]
+podman pull docker.io/donleonz/clinica-ioo:latest
+\end{lstlisting}
+
+% ============================================================================
+% 8. CONCLUSIONES
+% ============================================================================
+\section{Conclusiones}
+
+\begin{itemize}
+    \item El uso de contenedores permite empaquetar toda la aplicación con sus dependencias de sistema, garantizando que se ejecute de la misma forma en cualquier máquina que tenga Podman o Docker instalado.
+    \item La separación en dos contenedores (web y db) comunicados únicamente por una red privada refleja una arquitectura de producción: la base de datos nunca es accesible directamente desde el exterior.
+    \item Los volúmenes nombrados son la única forma correcta de garantizar la persistencia de los datos en un contenedor de base de datos; el sistema de archivos interno del contenedor es efímero por diseño.
+    \item Podman resulta una alternativa sólida a Docker en entornos Linux, por su naturaleza \textit{rootless}, su compatibilidad con el formato OCI y la ausencia de un demonio privilegiado. Todos los comandos y archivos (\texttt{Dockerfile}, \texttt{compose.yml}) son 100\% compatibles con ambos runtimes.
+    \item El paradigma orientado a objetos, aplicado mediante el ORM de Django, permite expresar el dominio de forma clara, con validaciones encapsuladas en las clases y relaciones explícitas entre entidades.
+\end{itemize}
+
+% ============================================================================
+% 9. REFERENCIAS
+% ============================================================================
+\section{Referencias}
+
+\begin{itemize}
+    \item Documentación oficial de Django: \url{https://docs.djangoproject.com/en/6.0/}
+    \item Documentación oficial de Podman: \url{https://docs.podman.io/}
+    \item Repositorio del proyecto: \url{https://github.com/Chatesito/trabajo-ioo}
+    \item Imagen oficial de PostgreSQL en Docker Hub: \url{https://hub.docker.com/_/postgres}
+    \item WhiteNoise: \url{https://whitenoise.readthedocs.io/}
+\end{itemize}
+
+\end{document}
