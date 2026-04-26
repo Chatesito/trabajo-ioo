@@ -193,7 +193,7 @@ Luego entrar a `http://localhost:8000/admin`.
 | Parar todo | `podman-compose down` |
 | Parar **y** borrar la DB | `podman-compose down -v` ⚠️ |
 | Reconstruir sin cache | `podman-compose build --no-cache` |
-| Entrar al contenedor web | `podman-compose exec web bash` |
+| Entrar al contenedor web | `podman-compose exec web sh` |
 | Entrar a psql | `podman-compose exec db psql -U clinica_user -d clinica` |
 
 ---

@@ -630,7 +630,7 @@ podman network ls               # redes
 ### Debugging
 
 ```bash
-podman-compose exec web bash                  # shell dentro del contenedor web
+podman-compose exec web sh                    # shell dentro del contenedor web
 podman-compose exec web python manage.py shell  # shell de Django
 podman-compose exec db psql -U clinica_user -d clinica  # shell de Postgres
 podman logs -f clinica_web                    # logs directos del contenedor
