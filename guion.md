@@ -723,5 +723,3 @@ Si tenés este guion claro podés responder cualquier cosa del taller. Los 5 con
 5. **Registry / Docker Hub** — donde se distribuye la imagen.
 
 El resto es detalle. Si entendés esos 5, todo lo demás se deriva.
-
-Éxitos en la sustentación, Jorge. Vos sabés más de lo que crees.
