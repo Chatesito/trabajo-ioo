@@ -674,17 +674,17 @@ Para detener los servicios al finalizar la demostración basta con \texttt{podma
 \caption{Contenedores en ejecución (\texttt{podman ps}). Obsérvese el estado \texttt{(healthy)} en \texttt{clinica\_db}.}
 \end{figure}
 
-\subsection{Credenciales del administrador (entorno de demostración)}
+\subsection{Credenciales del administrador}
 
-\textit{Nota: las credenciales que se muestran a continuación corresponden a un entorno de demostración aislado. No deben utilizarse en ningún despliegue de producción.}
-
-El \texttt{entrypoint.sh} crea automáticamente el siguiente superusuario en el admin de Django a partir de variables de entorno:
+El \texttt{entrypoint.sh} crea (o actualiza) automáticamente el superusuario del admin de Django a partir de variables de entorno definidas en el archivo \texttt{.env} local:
 
 \begin{itemize}
     \item \textbf{URL:} \url{http://localhost:8000/admin/}
-    \item \textbf{Usuario:} \texttt{Leon}
-    \item \textbf{Contraseña:} \texttt{changeme}
+    \item \textbf{Usuario:} valor de \texttt{DJANGO\_SUPERUSER\_USERNAME}.
+    \item \textbf{Contraseña:} valor de \texttt{DJANGO\_SUPERUSER\_PASSWORD}.
 \end{itemize}
+
+El archivo \texttt{.env} no se versiona en el repositorio público; el \texttt{.env.example} contiene únicamente \textit{placeholders} (\texttt{changeme}) que cada quien debe reemplazar por valores propios. Las credenciales utilizadas durante la sustentación se indicarán en vivo.
 
 \begin{figure}[H]
 \centering
