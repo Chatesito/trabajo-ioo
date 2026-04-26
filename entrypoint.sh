@@ -8,7 +8,7 @@ import psycopg2
 url = os.environ["DATABASE_URL"]
 for i in range(60):
     try:
-        psycopg2.connect(url).close()
+        psycopg2.connect(url, connect_timeout=1).close()
         print(">> DB lista")
         sys.exit(0)
     except Exception as e:

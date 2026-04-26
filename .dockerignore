@@ -16,3 +16,9 @@ staticfiles/
 !README.md
 .vscode/
 .idea/
+
+# Documentación y artefactos no necesarios en runtime
+informe/
+guion.md
+*.tex
+*.pdf

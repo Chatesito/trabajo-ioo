@@ -15,6 +15,7 @@ AGENTS.md
 proyecto_pacientes_citas.md
 Docs/
 .atl/
+start.sh
 
 # Artefactos de compilación LaTeX
 *.aux

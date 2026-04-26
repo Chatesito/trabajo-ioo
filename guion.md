@@ -475,11 +475,11 @@ exec "$@"
 
 ## 7. Flujo de ejecución completo
 
-Esto es lo que pasa desde que corrés `./start.sh` hasta que ves la página en el navegador:
+Esto es lo que pasa desde que corrés `podman-compose up --build -d` hasta que ves la página en el navegador:
 
 ```
-1. start.sh verifica podman y podman-compose.
-2. Crea .env si no existe.
+1. Verificar que podman y podman-compose están instalados.
+2. Asegurar que existe el archivo .env (copiarlo desde .env.example si no).
 3. podman-compose up --build -d
    │
    ├─▶ Podman lee compose.yml
@@ -501,17 +501,16 @@ Esto es lo que pasa desde que corrés `./start.sh` hasta que ves la página en e
                  ├─ Espera a DB (redundante pero OK)
                  ├─ migrate → crea tablas clinica_paciente, clinica_cita, etc
                  ├─ collectstatic → 130 archivos copiados a /app/staticfiles
-                 ├─ Crea superuser Leon
+                 ├─ Crea superuser
                  └─ exec gunicorn
                         └─▶ Escucha en 0.0.0.0:8000 con 3 workers
 
-4. start.sh espera hasta 60s a que localhost:8000 responda 200/302.
-5. Abre el navegador en http://localhost:8000/.
-6. El navegador hace GET / → Django responde 302 → redirige a /pacientes/.
-7. Vos creás, editás, borrás pacientes y citas.
-8. Presionás ENTER en la terminal → podman-compose down.
-9. Los contenedores se destruyen, PERO el volumen pgdata queda.
-10. La próxima vez que levantes, los datos están intactos.
+4. Abrir el navegador en http://localhost:8000/.
+5. El navegador hace GET / → Django responde 302 → redirige a /pacientes/.
+6. Crear, editar, borrar pacientes y citas desde la interfaz.
+7. Detener con `podman-compose down` cuando se termine la demo.
+8. Los contenedores se destruyen, PERO el volumen pgdata queda.
+9. La próxima vez que se levanten los servicios, los datos están intactos.
 ```
 
 ---
@@ -539,7 +538,7 @@ Resultado: Postgres cree que está escribiendo en su disco interno, pero en real
 
 ```bash
 # 1. Levantar y crear datos
-./start.sh
+podman-compose up --build -d
 # Crear 3 pacientes desde la UI
 
 # 2. Destruir los contenedores (PERO NO el volumen)
@@ -550,7 +549,7 @@ podman volume ls
 #   local   trabajo-ioo_pgdata  ← acá está
 
 # 4. Volver a levantar
-./start.sh
+podman-compose up -d
 
 # 5. Los 3 pacientes siguen ahí ✓
 ```
@@ -597,7 +596,7 @@ podman pull docker.io/donleonz/clinica-ioo:latest
 # Pero necesita también el compose.yml y .env con Postgres
 ```
 
-Por eso, en realidad, para que alguien corra el proyecto completo, necesita **clonar el repo** (para tener `compose.yml`, `.env.example`, `start.sh`) y la imagen se baja automáticamente en el `podman-compose up`.
+Por eso, en realidad, para que alguien corra el proyecto completo, necesita **clonar el repo** (para tener `compose.yml` y `.env.example`) y la imagen se baja automáticamente en el `podman-compose up`.
 
 ### ¿Qué son los tags?
 
@@ -631,7 +630,7 @@ podman network ls               # redes
 ### Debugging
 
 ```bash
-podman-compose exec web bash                  # shell dentro del contenedor web
+podman-compose exec web sh                    # shell dentro del contenedor web
 podman-compose exec web python manage.py shell  # shell de Django
 podman-compose exec db psql -U clinica_user -d clinica  # shell de Postgres
 podman logs -f clinica_web                    # logs directos del contenedor
@@ -673,7 +672,7 @@ Con un volumen nombrado declarado en `compose.yml`: `pgdata:/var/lib/postgresql/
 
 ### "¿Qué pasa si hacen `podman-compose down -v`?"
 
-Ahí sí se pierde todo. El `-v` borra los volúmenes explícitamente. Por eso en el `start.sh` hacemos solo `down` sin `-v`.
+Ahí sí se pierde todo. El `-v` borra los volúmenes explícitamente. Por eso siempre hacemos `down` sin `-v` salvo que queramos resetear los datos.
 
 ### "¿Cómo se comunican los contenedores entre ellos?"
 
@@ -723,5 +722,3 @@ Si tenés este guion claro podés responder cualquier cosa del taller. Los 5 con
 5. **Registry / Docker Hub** — donde se distribuye la imagen.
 
 El resto es detalle. Si entendés esos 5, todo lo demás se deriva.
-
-Éxitos en la sustentación, Jorge. Vos sabés más de lo que crees.
