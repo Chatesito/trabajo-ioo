@@ -4,7 +4,7 @@
 > **Universidad:** Universidad Surcolombiana
 > **Objetivo del taller:** Realizar un ejercicio de Programación Orientada a Objetos (CRUD con BD relacional) ejecutándose dentro de un contenedor, con persistencia mediante volúmenes, y publicado en Docker Hub.
 
-Este repositorio contiene una pequeña aplicación web de gestión de **pacientes** y **citas** de una clínica, construida con Django 6 siguiendo el paradigma orientado a objetos, con persistencia en PostgreSQL y empaquetada para correr con **Podman** (alternativa libre y compatible con Docker).
+Este repositorio contiene una pequeña aplicación web de gestión de **pacientes** y **citas** de una clínica, construida con Django 6.0.4 siguiendo el paradigma orientado a objetos, con persistencia en PostgreSQL y empaquetada para correr con **Podman** (alternativa libre y compatible con Docker).
 
 ---
 
@@ -93,7 +93,7 @@ trabajo-ioo/
 ├── entrypoint.sh             # Espera-DB → migrate → collectstatic → gunicorn
 ├── .dockerignore
 ├── .env.example              # Plantilla de variables de entorno
-└── README.md                 # Este informe
+└── README.md                 # Este archivo
 ```
 
 ---
@@ -142,7 +142,7 @@ cd trabajo-ioo
 cp .env.example .env
 ```
 
-Editá `.env` y cambiá como mínimo `SECRET_KEY` y `POSTGRES_PASSWORD`. El resto puede quedar como está para desarrollo local.
+Edita `.env` y reemplaza los valores `changeme` (`POSTGRES_PASSWORD`, `DJANGO_SUPERUSER_PASSWORD`) y `SECRET_KEY` por valores propios antes de levantar el entorno. El resto puede quedar como está para desarrollo local.
 
 ### 6.3. Construir y levantar
 
@@ -163,7 +163,7 @@ Este comando:
 podman ps
 ```
 
-Deberías ver `clinica_db` y `clinica_web` en estado `Up`.
+Debes ver `clinica_db` y `clinica_web` en estado `Up`.
 
 Abrir en el navegador:
 
@@ -291,8 +291,11 @@ Todas las variables se leen desde `.env` (cargado por `env_file` en `compose.yml
 | `ALLOWED_HOSTS` | Hosts permitidos (coma-separados) | `127.0.0.1,localhost` |
 | `POSTGRES_DB` | Nombre de la base | `clinica` |
 | `POSTGRES_USER` | Usuario de la base | `clinica_user` |
-| `POSTGRES_PASSWORD` | Contraseña de la base | `clinica_pass` |
-| `DATABASE_URL` | URL completa para Django | `postgres://clinica_user:clinica_pass@db:5432/clinica` |
+| `POSTGRES_PASSWORD` | Contraseña de la base | `changeme` |
+| `DATABASE_URL` | URL completa para Django | `postgres://clinica_user:changeme@db:5432/clinica` |
+| `DJANGO_SUPERUSER_USERNAME` | Usuario administrador (creado automáticamente) | `admin` |
+| `DJANGO_SUPERUSER_EMAIL` | Correo del administrador | `admin@example.local` |
+| `DJANGO_SUPERUSER_PASSWORD` | Contraseña del administrador | `changeme` |
 
 ---
 
@@ -324,7 +327,11 @@ Todos los comandos `podman-compose X` son equivalentes a `docker compose X`. La 
 
 ## 13. Integrantes
 
-- Jorge León (`@Chatesito`)
+- Jorge León Chavarro Alarcón (`@DonLeonz`) — Código: 20231211354
+- Juan David Rivera Chaté (`@Chatesito`) — Código: 20231213382
+- Luis Alejandro Restrepo Medina — Código: 20231211869
+
+**Docente:** Eduardo Martínez Vidal — Universidad Surcolombiana, Facultad de Ingeniería, Programa de Ingeniería de Software.
 
 ---
 
