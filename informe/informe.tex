@@ -658,7 +658,7 @@ curl http://localhost:8000/pacientes/
     \end{lstlisting}
 \end{enumerate}
 
-Alternativamente, se incluye el script \texttt{start.sh} que automatiza todo el proceso, abre el navegador y detiene los contenedores al presionar \texttt{ENTER}.
+Para detener los servicios al finalizar la demostración basta con \texttt{podman-compose down} (sin el flag \texttt{-v}, que conservaría los datos del volumen).
 
 \subsection{Evidencias del despliegue}
 
@@ -774,7 +774,7 @@ A continuación se evalúa el cumplimiento de los objetivos planteados al inicio
     \item \textbf{CRUD orientado a objetos con dos entidades}: cumplido. Las clases \texttt{Paciente} y \texttt{Cita} modelan el dominio mediante el ORM de Django, con validadores encapsulados, relación 1 a N por \texttt{ForeignKey} y vistas basadas en clases (\textit{Class-Based Views}) que reutilizan jerarquías de Django.
     \item \textbf{Arquitectura multi-contenedor con separación de responsabilidades}: cumplido. El servicio \texttt{web} (Django + gunicorn) y el servicio \texttt{db} (PostgreSQL 16) viven en contenedores independientes, conectados por una red privada y con un único puerto expuesto al host.
     \item \textbf{Persistencia mediante volúmenes nombrados}: cumplido y verificado experimentalmente. El volumen \texttt{pgdata} sobrevive a \texttt{podman-compose down}, reinicios del equipo y reconstrucciones de la imagen del servicio web.
-    \item \textbf{Automatización del arranque}: cumplido. \texttt{podman-compose} orquesta el ciclo de vida y el script \texttt{start.sh} cubre el flujo completo (verificar Podman, crear \texttt{.env}, levantar, abrir navegador, detener al cerrar).
+    \item \textbf{Automatización del arranque}: cumplido. \texttt{podman-compose} orquesta en un solo comando la construcción de la imagen, la creación de la red privada y el volumen, el arranque ordenado de los contenedores (con \textit{healthchecks}) y la ejecución de migraciones, recolección de estáticos y creación del superusuario desde el \texttt{entrypoint}.
     \item \textbf{Publicación en Docker Hub}: cumplido. La imagen está disponible públicamente con dos tags (\texttt{latest} y \texttt{v1.0}) y puede ejecutarse indistintamente con Podman o Docker.
 \end{itemize}
 
