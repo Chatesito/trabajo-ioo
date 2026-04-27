@@ -400,37 +400,40 @@ La solución se compone de \textbf{dos contenedores} orquestados por \texttt{pod
     },
     layerlbl/.style={
         font=\footnotesize\bfseries\sffamily,
-        inner sep=3.5pt,
+        inner xsep=6pt,
+        inner ysep=3pt,
         rounded corners=2pt,
         fill=white,
+        draw=gray!50,
+        line width=0.3pt,
     },
     layer-host/.style={
-        draw=gray!45,
-        line width=0.5pt,
+        draw=gray!55,
+        line width=0.6pt,
         rounded corners=10pt,
-        fill=gray!4,
-        inner sep=0.65cm,
+        fill=gray!8,
+        inner sep=0.85cm,
     },
     layer-podman/.style={
-        draw=primaryblue!45,
-        line width=0.5pt,
+        draw=primaryblue!55,
+        line width=0.6pt,
         rounded corners=8pt,
-        fill=primaryblue!3,
-        inner sep=0.55cm,
+        fill=primaryblue!7,
+        inner sep=0.7cm,
     },
     layer-net/.style={
-        draw=secondaryblue!55,
-        line width=0.4pt,
+        draw=secondaryblue!65,
+        line width=0.5pt,
         dashed,
         rounded corners=6pt,
-        fill=secondaryblue!6,
-        inner sep=0.42cm,
+        fill=secondaryblue!12,
+        inner sep=0.55cm,
     },
 ]
 
     \node[browser] (browser) {\textbf{Navegador del usuario}};
 
-    \node[box, below=2.2cm of browser, xshift=-2.6cm] (web) {%
+    \node[box, below=3.2cm of browser, xshift=-2.6cm] (web) {%
         \textbf{\color{primaryblue}clinica\_web}\\[2pt]
         {\footnotesize Django + Gunicorn}\\[1pt]
         {\footnotesize\ttfamily :8000}};
@@ -442,22 +445,22 @@ La solución se compone de \textbf{dos contenedores} orquestados por \texttt{pod
 
     \node[cyl, below=1.6cm of db] (vol) {\textbf{pgdata}};
 
-    \draw[arrow] (browser) -- node[flowlbl, pos=0.45] {HTTP \texttt{8000:8000}} (web);
-    \draw[arrow] (web) -- node[flowlbl, pos=0.5, align=center] {DNS \texttt{db}\\TCP \texttt{5432}} (db);
-    \draw[arrow] (db) -- node[flowlbl, pos=0.5] {\texttt{/var/lib/postgresql/data}} (vol);
-
     \begin{pgfonlayer}{background}
         \node[layer-net, fit=(web)(db)] (net) {};
         \node[layer-podman, fit=(net)(vol)] (podman) {};
         \node[layer-host, fit=(browser)(podman)] (host) {};
     \end{pgfonlayer}
 
-    \node[layerlbl, color=secondaryblue, anchor=west]
-        at ([xshift=10pt, yshift=-2pt]net.north west) {Red privada \texttt{clinica\_net}};
-    \node[layerlbl, color=primaryblue, anchor=west]
-        at ([xshift=10pt, yshift=-2pt]podman.north west) {Podman runtime (rootless)};
-    \node[layerlbl, color=darkgray, anchor=west]
-        at ([xshift=10pt, yshift=-2pt]host.north west) {Host (sistema Linux)};
+    \draw[arrow] (browser) -- node[flowlbl, pos=0.55] {HTTP \texttt{8000:8000}} (web);
+    \draw[arrow] (web) -- node[flowlbl, pos=0.5, align=center] {DNS \texttt{db}\\TCP \texttt{5432}} (db);
+    \draw[arrow] (db) -- node[flowlbl, pos=0.5] {\texttt{/var/lib/postgresql/data}} (vol);
+
+    \node[layerlbl, text=darkgray, anchor=north west]
+        at ([xshift=12pt, yshift=-6pt]host.north west) {Host (sistema Linux)};
+    \node[layerlbl, text=primaryblue, anchor=north east]
+        at ([xshift=-12pt, yshift=-6pt]podman.north east) {Podman runtime (rootless)};
+    \node[layerlbl, text=secondaryblue, anchor=north west]
+        at ([xshift=12pt, yshift=-6pt]net.north west) {Red privada \texttt{clinica\_net}};
 
 \end{tikzpicture}
 \caption{Arquitectura de contenedores del sistema.}
